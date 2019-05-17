@@ -94,13 +94,14 @@ function checkProduct(userItem, userQuantity) {
         // currentStock >= userQuantity ? console.log("Thanks for buying our stuff!") : console.log("We don't have enough product right now!")
 
         if (currentStock >= userQuantity) {
-            console.log("Thanks for buying our stuff!")
+            console.log("\nThanks for buying our stuff!\n")
             let newStock = currentStock -= userQuantity;
             fulfillOrder(newStock, userItem);
         } else {
-            console.log("We don't have enough product right now!")
-            promptBuyer();
-            newShipment();
+            console.log("\nWe don't have enough product right now!\n")
+            newShipment(userItem, currentStock);
+            // promptBuyer();
+            n
         }
     })
 }
@@ -130,13 +131,15 @@ function userReceipt() {
         userTotal = itemPrice * userQuantity;
         // console.log(userTotal)
         receipt = new CreateReceipt(userProduct, itemPrice, userQuantity, userTotal);
+        console.log("\n")
         console.table(receipt);
+        console.log("\n----------\n")
     
     })
 }
 
 function completePurchase() {
-    console.log(`\n--------------\n\nThanks for your purchase!\n`);
+    console.log(`\n--------------\n`);
     
     inquirer.prompt([
         {
@@ -146,6 +149,7 @@ function completePurchase() {
         }
     ]).then(function(answers) {
         if(answers.purchase) {
+
         userReceipt();
 
             displayItems();
@@ -156,10 +160,12 @@ function completePurchase() {
     })
 }
 
-function newShipment() {
-    let query = `SELECT stock FROM products WHERE *`
-    connection.query(query, function (err, res) {
+function newShipment(userItem, currentStock) {
+    console.log(currentStock)
+    let shipment = currentStock += 25
+    let query = `UPDATE products SET stock = ${shipment}  WHERE id = ${userItem}`
+    connection.query(query, [{ shipment }, { userItem }], function (err, res) {
         console.log(res)        
-
+        displayItems();
     })
 }
